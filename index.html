@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Socket IO App
+	</title>
+	<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'/>
+</head>
+<script src='/socket.io/socket.io.js'></script>
+<style>
+	.btn, .form-control{ border-radius: 0; }
+	.mt24 { margin-top: 24px; }
+	#chat { min-height: 300px; }
+	.mr16 { margin-right: 16px; }
+</style>
+<body>
+	<div class='container'>
+		<h1> Socket IO APP</h1>
+
+		<div class='row' id='userNameForm'>
+			<div class='mt24 col-sm-6 col-sm-offset-3'>
+				<h3> Enter Chatroom</h3>
+				<form id='userForm'>
+					<div class='form-group'>
+						<label> UserName</label>
+						<input type='text' class='form-control' id='username' placeholder='Your Username'/>
+					</div>
+					<div class='form-group'>
+						<button class='btn btn-default' type='submit' id='sendUserNameBtn'>Enter</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class='row mt24' id='messageArea' style='display:none'>
+			<div class='col-md-4'>
+				<h3> Online Users</h3>
+				<ul class='list-group' id='users'></ul>
+			</div>
+			<div class='col-md-8'>
+				<h3> Chats </h3>
+				<div id='chat'>
+					
+				</div>
+				<form id='messageForm'>
+					<div class='input-group'>
+						<input type='text' class='form-control' id='message'/>
+						<span class="input-group-btn">
+							<button type='submit' class='btn btn-primary' id='send'>Send</button>
+						</span>
+					</div>
+				</form>
+			</div>
+			
+		</div>
+	</div>
+
+</body>
+<script>
+	var socket = io.connect();
+	var messageForm = document.getElementById('messageForm');
+	var message = document.getElementById('message');
+	var chatDiv = document.getElementById('chat');
+	var users = document.getElementById('users');
+	var messageArea = document.getElementById('messageArea');
+	var userNameForm = document.getElementById('userNameForm');
+	var username = document.getElementById('username');
+
+
+	messageForm.addEventListener('submit', function(e){
+		e.preventDefault();
+		var data = { msg: message.value };
+		socket.emit('send-message', data);
+		message.value = "";
+	});
+
+	socket.on('new-message', function(data){
+		chatDiv.innerHTML += `<p> <strong class='mr16'> ${data.user}: </strong> ${data.msg}</p>`;
+	});
+
+	userNameForm.addEventListener('submit', function(e){
+		e.preventDefault()
+		var data = { user: username.value }
+		socket.emit('send-user', data);
+		userNameForm.style.display = "none";
+		messageArea.style.display = "block";
+	});
+
+	socket.on('new-user', function(data){
+		var newLi = document.createElement("li");
+		var textNode = document.createTextNode(`${data.user}`); 
+		newLi.appendChild(textNode);
+		users.appendChild(newLi);
+	});
+</script>
+</html>
