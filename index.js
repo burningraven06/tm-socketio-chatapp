@@ -31,8 +31,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('send-user', function(data){
 		socket.user = data.user;
 		io.sockets.emit('new-user', data);
-
-	})
+	});
 	
 });
 
