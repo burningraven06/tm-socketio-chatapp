@@ -1,7 +1,9 @@
 {
   "name": "ioChatApp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chat App with Express.js & Socket.io ",
+  "private": true,
+  "author": "Toufiq (https://twitter.com/burningraven06)",
   "main": "index.js",
   "scripts": {
     "start-app" : "node index.js",
